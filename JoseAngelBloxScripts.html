@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JoseAngel_Blox Script</title>
+  <!-- Font Awesome para íconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #6a0dad; /* morado fuerte */
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* contenedor principal */
+    .app {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      width: 100%;
+      max-width: 1200px;
+      min-height: 90vh;
+      border-radius: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      padding: 20px 30px 30px;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* header con tres rayas (menú) */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .menu-icon {
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      background: rgba(0,0,0,0.2);
+      padding: 8px 14px;
+      border-radius: 30px;
+      transition: 0.2s;
+      user-select: none;
+    }
+    .menu-icon:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+
+    .titulo-web {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .titulo-web i {
+      margin-right: 10px;
+      color: #ffd966;
+    }
+
+    /* menú desplegable (tres rayas) */
+    .dropdown-menu {
+      position: absolute;
+      top: 70px;
+      left: 0;
+      background: rgba(50, 10, 70, 0.95);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 20px 0;
+      width: 220px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      display: none;
+      flex-direction: column;
+      border: 1px solid rgba(255,255,255,0.2);
+      z-index: 100;
+    }
+    .dropdown-menu.active {
+      display: flex;
+    }
+    .dropdown-menu a {
+      color: #f0e6ff;
+      padding: 14px 24px;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dropdown-menu a:last-child {
+      border-bottom: none;
+    }
+    .dropdown-menu a:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffec99;
+      padding-left: 30px;
+    }
+    .dropdown-menu a i {
+      width: 24px;
+      text-align: center;
+    }
+
+    /* secciones */
+    .page {
+      display: none;
+      animation: fade 0.3s ease;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fade {
+      0% { opacity: 0.4; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* login / registro */
+    .auth-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px);
+      max-width: 440px;
+      margin: 40px auto;
+      padding: 40px 30px;
+      border-radius: 40px;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    .auth-box h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+    .auth-box input {
+      width: 100%;
+      padding: 14px 18px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 60px;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-size: 1rem;
+      outline: 1px solid transparent;
+      transition: 0.2s;
+    }
+    .auth-box input::placeholder {
+      color: #ddd0f0;
+    }
+    .auth-box input:focus {
+      outline: 1px solid #ffd966;
+      background: rgba(255,255,255,0.25);
+    }
+    .auth-box button {
+      width: 100%;
+      padding: 14px;
+      margin: 20px 0 10px;
+      border: none;
+      border-radius: 60px;
+      background: #ffd966;
+      color: #2d0a3a;
+      font-weight: bold;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 0 #b38f40;
+    }
+    .auth-box button:hover {
+      background: #ffe08a;
+      transform: scale(0.98);
+    }
+    .auth-box .switch {
+      text-align: center;
+      margin-top: 18px;
+      color: #e0d0f0;
+    }
+    .auth-box .switch span {
+      color: #ffd966;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    .auth-error {
+      color: #ffb3b3;
+      background: rgba(200, 0, 0, 0.2);
+      padding: 8px;
+      border-radius: 30px;
+      text-align: center;
+      margin: 6px 0;
+    }
+
+    /* panel de scripts */
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+    .script-card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(4px);
+      border-radius: 30px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+      color: white;
+      cursor: pointer;
+    }
+    .script-card:hover {
+      transform: translateY(-8px);
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+    }
+    .script-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 20px;
+      background: #3d1b4b;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .script-card h3 {
+      margin: 12px 0 4px;
+      font-size: 1.3rem;
+    }
+    .script-card p {
+      opacity: 0.8;
+      font-size: 0.95rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* vista detalle script */
+    .script-detail {
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      padding: 30px;
+      border-radius: 40px;
+      color: white;
+      margin: 20px 0;
+    }
+    .script-detail img {
+      max-width: 100%;
+      max-height: 260px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      margin-bottom: 16px;
+    }
+    .script-detail pre {
+      background: #1f0a2b;
+      padding: 20px;
+      border-radius: 20px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border-left: 6px solid #ffd966;
+      font-family: 'Courier New', monospace;
+      margin: 20px 0;
+      color: #e8d5f5;
+    }
+    .copy-btn {
+      background: #ffd966;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 60px;
+      font-weight: bold;
+      color: #2d0a3a;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 0 #b38f40;
+    }
+    .copy-btn:hover {
+      background: #ffe08a;
+      transform: scale(0.97);
+    }
+
+    /* admin panel (solo visible para JoseAngel) */
+    .admin-panel {
+      background: rgba(255,255,255,0.05);
+      border-radius: 40px;
+      padding: 25px;
+      margin: 30px 0;
+      border: 2px dashed #ffd966;
+    }
+    .admin-panel h3 {
+      color: #ffd966;
+      margin-bottom: 20px;
+    }
+    .admin-panel input, .admin-panel textarea {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 40px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1rem;
+    }
+    .admin-panel textarea {
+      border-radius: 20px;
+      min-height: 80px;
+      resize: vertical;
+    }
+    .admin-panel button {
+      background: #ffd966;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-weight: bold;
+      color: #2d0a3a;
+      margin: 12px 0;
+      cursor: pointer;
+    }
+    .admin-panel .mini-preview {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 30px;
+    }
+
+    /* support chat */
+    .support-box {
+      max-width: 600px;
+      margin: 30px auto;
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 40px;
+      color: white;
+    }
+    .support-box textarea {
+      width: 100%;
+      padding: 16px;
+      border-radius: 30px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1rem;
+      min-height: 120px;
+    }
+    .support-box button {
+      background: #ffd966;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-weight: bold;
+      color: #2d0a3a;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+    .support-box .correo-info {
+      margin-top: 20px;
+      opacity: 0.7;
+      font-size: 0.9rem;
+      background: rgba(0,0,0,0.2);
+      padding: 10px 20px;
+      border-radius: 60px;
+      display: inline-block;
+    }
+
+    .back-link {
+      color: #ffd966;
+      cursor: pointer;
+      display: inline-block;
+      margin: 20px 0 10px;
+      font-weight: 600;
+    }
+    .back-link i {
+      margin-right: 8px;
+    }
+
+    /* utilidades */
+    .hidden { display: none; }
+    .mt-2 { margin-top: 20px; }
+    .text-center { text-align: center; }
+    .flex-center { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="menu-icon" id="menuIcon">
+      <i class="fas fa-bars"></i>
+    </div>
+    <div class="titulo-web">
+      <i class="fas fa-code"></i> JoseAngel_Blox Script
+    </div>
+    <div style="width:48px;"></div> <!-- spacer -->
+  </div>
+
+  <!-- MENU DESPLEGABLE (tres rayas) -->
+  <div class="dropdown-menu" id="dropdownMenu">
+    <a href="#" data-page="info"><i class="fas fa-info-circle"></i> Info</a>
+    <a href="#" data-page="scripts"><i class="fas fa-file-code"></i> Scripts</a>
+    <a href="#" data-page="support"><i class="fas fa-headset"></i> Support</a>
+  </div>
+
+  <!-- ========== PAGINAS ========== -->
+
+  <!-- INFO -->
+  <div class="page" id="page-info">
+    <div style="background: rgba(0,0,0,0.2); padding: 30px; border-radius: 40px; color: white;">
+      <h2><i class="fas fa-user-astronaut"></i> Nombre del Creador: JoseAngel_Blox</h2>
+      <p style="font-size: 1.3rem; margin-top: 20px;">Bienvenidos y bienvenidas a mi sitio web aquí encontraras mis scripts y ayudas y mucho más</p>
+    </div>
+  </div>
+
+  <!-- SCRIPTS (listado) -->
+  <div class="page" id="page-scripts">
+    <h2 style="color:white; margin-bottom:10px;"><i class="fas fa-list-ul"></i> Scripts disponibles</h2>
+    <div id="scriptsContainer" class="scripts-grid">
+      <!-- se llena con JS -->
+    </div>
+    <!-- vista detalle (se muestra al hacer click en una card) -->
+    <div id="detailView" class="hidden"></div>
+    <div id="backToList" class="back-link hidden" onclick="showScriptList()"><i class="fas fa-arrow-left"></i> Volver a la lista</div>
+  </div>
+
+  <!-- SUPPORT -->
+  <div class="page" id="page-support">
+    <div class="support-box">
+      <h2><i class="fas fa-envelope"></i> Contacto</h2>
+      <p style="margin-bottom:16px;">Escribe tu mensaje y te responderé a la brevedad.</p>
+      <textarea id="mensajeSupport" placeholder="Escribe tu mensaje aquí..."></textarea>
+      <button onclick="enviarCorreo()"><i class="fas fa-paper-plane"></i> Enviar</button>
+      <div class="correo-info"><i class="fas fa-at"></i> joseangelarteagagomez179@gmail.com</div>
+      <div id="supportMsg" style="margin-top:12px; color:#b3ffb3;"></div>
+    </div>
+  </div>
+
+  <!-- LOGIN / REGISTRO (se muestra por defecto) -->
+  <div id="authSection" class="auth-box">
+    <h2 id="authTitle"><i class="fas fa-lock"></i> Iniciar Sesión</h2>
+    <div id="authError" class="auth-error hidden"></div>
+    <input type="text" id="authUser" placeholder="Usuario">
+    <input type="password" id="authPass" placeholder="Contraseña">
+    <button id="authBtn">Ingresar</button>
+    <div class="switch" id="switchAuth">
+      ¿No tienes cuenta? <span id="toggleAuth">Regístrate</span>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL (solo visible para JoseAngel_Blox) -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <h3><i class="fas fa-edit"></i> Panel de publicación (solo admin)</h3>
+    <input type="text" id="scriptTitle" placeholder="Nombre del script">
+    <input type="text" id="scriptImage" placeholder="URL de miniatura (imagen)">
+    <textarea id="scriptDesc" placeholder="Descripción breve"></textarea>
+    <textarea id="scriptCode" placeholder="Código del script..."></textarea>
+    <button onclick="publicarScript()"><i class="fas fa-cloud-upload-alt"></i> Publicar script</button>
+    <div id="adminMsg" style="color:#b3ffb3; margin-top:10px;"></div>
+  </div>
+
+</div>
+
+<script>
+  // ========== ESTADO ==========
+  let currentUser = null;
+  let scripts = [];  // array de objetos { id, title, image, desc, code }
+  let scriptIdCounter = 0;
+
+  // ========== REFERENCIAS ==========
+  const authSection = document.getElementById('authSection');
+  const authBtn = document.getElementById('authBtn');
+  const authTitle = document.getElementById('authTitle');
+  const toggleAuth = document.getElementById('toggleAuth');
+  const authError = document.getElementById('authError');
+  const authUser = document.getElementById('authUser');
+  const authPass = document.getElementById('authPass');
+  const adminPanel = document.getElementById('adminPanel');
+  const scriptsContainer = document.getElementById('scriptsContainer');
+  const detailView = document.getElementById('detailView');
+  const backToList = document.getElementById('backToList');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const menuIcon = document.getElementById('menuIcon');
+
+  let isLoginMode = true;
+  let selectedScriptId = null;
+
+  // ========== MENU DESPLEGABLE ==========
+  menuIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle('active');
+  });
+  document.addEventListener('click', () => {
+    dropdownMenu.classList.remove('active');
+  });
+  dropdownMenu.addEventListener('click', (e) => e.stopPropagation());
+
+  // ========== CAMBIO DE PAGINAS ==========
+  document.querySelectorAll('.dropdown-menu a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const page = link.dataset.page;
+      mostrarPagina(page);
+      dropdownMenu.classList.remove('active');
+    });
+  });
+
+  function mostrarPagina(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(`page-${pageId}`);
+    if (target) target.classList.add('active');
+    // ocultar detalle si estamos en scripts
+    if (pageId === 'scripts') {
+      showScriptList();
+    }
+  }
+
+  // ========== AUTH ==========
+  toggleAuth.addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    authTitle.innerHTML = isLoginMode ? '<i class="fas fa-lock"></i> Iniciar Sesión' : '<i class="fas fa-user-plus"></i> Registrarse';
+    authBtn.textContent = isLoginMode ? 'Ingresar' : 'Registrarme';
+    toggleAuth.textContent = isLoginMode ? 'Regístrate' : 'Inicia sesión';
+    authError.classList.add('hidden');
+  });
+
+  authBtn.addEventListener('click', () => {
+    const user = authUser.value.trim();
+    const pass = authPass.value.trim();
+    if (!user || !pass) {
+      showError('Completa todos los campos.');
+      return;
+    }
+    // Simulamos registro / login
+    if (isLoginMode) {
+      // login: solo permite el usuario "JoseAngel_Blox" con cualquier contraseña (para demo)
+      if (user === 'JoseAngel_Blox') {
+        currentUser = 'JoseAngel_Blox';
+        authSection.style.display = 'none';
+        adminPanel.classList.remove('hidden');
+        mostrarPagina('scripts');
+        renderScripts();
+        // Mostrar mensaje de bienvenida
+        alert('Bienvenido JoseAngel_Blox, ya puedes publicar scripts.');
+      } else {
+        // otros usuarios pueden "iniciar" pero no publicar
+        // simulamos que existen si se registraron antes (en memoria)
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (users[user] && users[user] === pass) {
+          currentUser = user;
+          authSection.style.display = 'none';
+          adminPanel.classList.add('hidden');
+          mostrarPagina('scripts');
+          renderScripts();
+        } else {
+          showError('Credenciales incorrectas. Usuario: JoseAngel_Blox (admin) o regístrate.');
+        }
+      }
+    } else {
+      // registro: guardamos en localStorage
+      const users = JSON.parse(localStorage.getItem('users')) || {};
+      if (users[user]) {
+        showError('El usuario ya existe.');
+        return;
+      }
+      users[user] = pass;
+      localStorage.setItem('users', JSON.stringify(users));
+      currentUser = user;
+      authSection.style.display = 'none';
+      adminPanel.classList.add('hidden');
+      mostrarPagina('scripts');
+      renderScripts();
+      alert('Registro exitoso. Ahora inicia sesión (si no eres JoseAngel_Blox no podrás publicar).');
+      // Para demo, si el usuario se registra como JoseAngel_Blox le damos admin
+      if (user === 'JoseAngel_Blox') {
+        adminPanel.classList.remove('hidden');
+      }
+    }
+  });
+
+  function showError(msg) {
+    authError.textContent = msg;
+    authError.classList.remove('hidden');
+  }
+
+  // ========== SCRIPTS ==========
+  function renderScripts() {
+    if (!scriptsContainer) return;
+    if (scripts.length === 0) {
+      scriptsContainer.innerHTML = `<p style="color:white; grid-column:1/-1; text-align:center; padding:40px;">No hay scripts publicados aún.</p>`;
+      return;
+    }
+    scriptsContainer.innerHTML = scripts.map(s => `
+      <div class="script-card" onclick="verScript(${s.id})">
+        <img src="${s.image || 'https://via.placeholder.com/300x150/3d1b4b/ffd966?text=Script'}" alt="miniatura">
+        <h3>${s.title}</h3>
+        <p>${s.desc || 'Sin descripción'}</p>
+      </div>
+    `).join('');
+  }
+
+  function verScript(id) {
+    const script = scripts.find(s => s.id === id);
+    if (!script) return;
+    selectedScriptId = id;
+    scriptsContainer.classList.add('hidden');
+    detailView.classList.remove('hidden');
+    backToList.classList.remove('hidden');
+    detailView.innerHTML = `
+      <div class="script-detail">
+        <img src="${script.image || 'https://via.placeholder.com/600x300/3d1b4b/ffd966?text=Script'}" alt="miniatura">
+        <h2>${script.title}</h2>
+        <p>${script.desc || ''}</p>
+        <pre id="codeBlock">${script.code || '// código no disponible'}</pre>
+        <button class="copy-btn" onclick="copiarCodigo()"><i class="fas fa-copy"></i> Copiar código</button>
+        <div style="margin-top:12px;"><span style="opacity:0.5;">ID: ${script.id}</span></div>
+      </div>
+    `;
+  }
+
+  function showScriptList() {
+    scriptsContainer.classList.remove('hidden');
+    detailView.classList.add('hidden');
+    backToList.classList.add('hidden');
+    renderScripts();
+  }
+
+  function copiarCodigo() {
+    const codeBlock = document.getElementById('codeBlock');
+    if (!codeBlock) return;
+    const text = codeBlock.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Código copiado al portapapeles.');
+    }).catch(() => {
+      // fallback
+      const range = document.createRange();
+      range.selectNode(codeBlock);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      alert('Código copiado.');
+    });
+  }
+
+  // ========== PUBLICAR (solo JoseAngel_Blox) ==========
+  function publicarScript() {
+    if (currentUser !== 'JoseAngel_Blox') {
+      alert('No tienes permisos para publicar.');
+      return;
+    }
+    const title = document.getElementById('scriptTitle').value.trim();
+    const image = document.getElementById('scriptImage').va
